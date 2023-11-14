@@ -48,9 +48,9 @@ To have local time you have to set time zone. There are 3 ways:
 There is *system time* kept by running kernel and *hardware clock* which keeps time when the machine is off.
 
 Set local time with `date` command like:
-`date -s 16:04` - sets time to 16:04PM
-`date --date '@12345678'` - converts epoch tumestamp to human readable form
+- `date -s 16:04` - sets time to 16:04PM
+- `date --date '@12345678'` - converts epoch tumestamp to human readable form
 
-`hwclock --systohc` - sets hardware clock according to system time
-`hwclock --hctosys` - sety system time by hardware clock
+- `hwclock --systohc` - sets hardware clock according to system time
+- `hwclock --hctosys` - sety system time by hardware clock
 
