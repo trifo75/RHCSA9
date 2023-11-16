@@ -2,12 +2,12 @@
 Preparing for RHCSA exam on RHEL9
 
 ## Topics 
+- [Firewall](./Topics/firewall.md)
 - [Time](./Topics/time_services.md)
 - [Mounting remote filesystems](./Topics/remote_fs.md)
 - [Containers](./Topics/containers.md)
 
 ## Topics in progress
-- [Firewall](./Topics/firewall.md)
 - [sshd](./Topics/sshd.md)
 - [SELinux](./Topics/selinux.md)
 - [Basic kernel management](./Topics/basic_kernel_mgmt.md)
