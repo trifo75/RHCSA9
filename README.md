@@ -8,6 +8,7 @@ Preparing for RHCSA exam on RHEL9
 - [Containers](./Topics/containers.md)
 
 ## Topics in progress
+- [Users and groups](./Topics/users_and_groups.md)
 - [sshd](./Topics/sshd.md)
 - [SELinux](./Topics/selinux.md)
 - [Basic kernel management](./Topics/basic_kernel_mgmt.md)
