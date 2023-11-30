@@ -2,6 +2,7 @@
 Preparing for RHCSA exam on RHEL9
 
 ## Topics 
+- [Users and groups](./Topics/users_and_groups.md)
 - [Firewall](./Topics/firewall.md)
 - [Time](./Topics/time_services.md)
 - [Mounting remote filesystems](./Topics/remote_fs.md)
@@ -10,7 +11,6 @@ Preparing for RHCSA exam on RHEL9
 - [Software management with DNF](./Topics/dnf.md)
 
 ## Topics in progress
-- [Users and groups](./Topics/users_and_groups.md)
 - [sshd](./Topics/sshd.md)
 - [SELinux](./Topics/selinux.md)
 - [Configuring network](./Topics/network_config.md)

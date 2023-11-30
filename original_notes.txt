@@ -1,0 +1,307 @@
+
+
+
+lsblk - bulk device infók
+blkid - UUID listázás
+
+e2label - LABEL felírása fs-re
+
+lvmdiskscan - list PV
+
+pvcreate /dev/sdb - create PV
+pvs - list PV
+vgcreate vgname pvlist
+
+vgs - list VG-s
+lvcreate -L 20G -n lv_ezaneve vg_ebbavgbe
+
+lvs - LV list
+lvdisplay - list LV details
+
+mkfs -t ext4 /dev/vg_ebbeavgbe/lv_ezaneve
+
+lvextend -L +5G -r /dev/vg_neve/lv_neve - LV növelése 5GB-vel ÉS fs növelése (-r)
+resize2fs - ha nem növeltük az LV-vel
+
+===========================================================
+
+RHCSA 7
+=======
+
+chapter 0 
+=========
+
+nyelv beállítása
+localectl
+GNOME nyelv helye /var/lib/AccountService/$USER fájlban "Language= ..."
+
+localectl set-locale LANG=fr_FR.utf8
+
+# lehetséges nyelvek listázása
+yum langavailable
+(újabb verzión a dnf már másképp csinálja)
+
+chapter 1 - local&remote logins
+===============================
+
+1 graikus konzol és 5 szüveges a default
+CTRL- ALT - F1 ... CTRL-ALT-F5
+
+SSH kulcsmásolás:
+ssh-copy-id   # >> távoli gépre telepíti a helyben lévő kulcsot auth-hoz
+
+redhat-support-tool # tudásbázis elérése terminálból - előfizetéses
+                    # support jegyek kezelésére is jó
+
+sosreport - olyasmi, mint a SNAP
+            * újabban "sos report" van helyette - ez tud érzékeny infókat kivenni a reportokból pl
+
+chapter 2 file system navigation
+================================
+
+/tmp alól 10 nap után törlődik automatikusan amihez nyem nyúlt senki
+/var/tmp alól 30 nap után 
+
+/bin /sbin /lib /lib64 már csak symlink a /usr alatti megfelelőkre
+
+hardlink esetén minden példányra egyezik a 
+  * link count
+  * owner/group
+  * jogok 
+
+
+
+VDO = Virtual Disk Optimizer - thin provosioning driver 
+/.autorelabel - SELinux automatikus kontext visszaállítás bootkor
+
+###########################################
+
+RHCSA jegyzetek
+
+type parancs - megmondja, hogy egy "név" az mi (alias / függvény / program / builtin )
+which 
+whereis
+
+vimtutor - vim használatára oktat
+
+RPM csomagellenőrzés:
+rpm -V   / rpm --verify
+jogosultság visszaállítása:
+rpm --restore csomagnév
+
+
+find parancs mellett az indexelt fájlokra használható a 
+locate  --> /var/lib/mlocate/mlocate.db
+whereis
+
+ACL:
+access: a tényleges jogosultság
+default: csak könyvtáron - amit az alá létrejövő fájlok örökölnek 
+mask: mint az umask, maximalizálja a hozzáférést, ennél több joga senkinek se lehet
+u[ser]:name/uid:engedélyek (rwx)
+g[roup]:name/gid:engedélyek (rwx)
+o[ther]:engedélyek (rwx)   - NINCS ID
+
+getfacl kimenete fájlba írható, onnan -M kapcsolóval felolvashazó a setfacl-ben
+
+
+lastlog
+lastb
+
+chage - password agong paraméterezés
+
+gpasswg - group password (gshadow)
+
+
+useradd parancshoz paraméterként át nem adott értékek
+* /etc/default/useradd
+* /etc/login.defs
+* /etc/skel - default home - .bash_logout is
+
+password igények két helyen vannak:
+  /etc/login.defs               -- EZ NEM SZÁMÍT (??? akkor miért van ???)
+  /etc/security/pwquality.conf  -- Ez hasznlódik
+
+useradd -D    - default-ok listázása
+
+
+bash
+* env
+* printenv 
+
+set -o noclobber    - fájl felülírás megakadályozása
+
+&>   - átirányítás   >... 2>&1   helyett
+
+/etc/bashrc
+/etc/profile
+
+
+process states
+* running
+* waiting 
+* sleeping
+* zombie
+* stopped
+
+
+
+Diszk növelés:
+* VBox alatt diszk felhúzás
+* echo 1 > /sys/class/block/DEVICENEVE/device/rescan   # Kernel olvassa újra a diszket. Vagy reboot
+* parted resizepart...  # LVM partíció növelése
+* pvresize # PV igazítása a partícióhoz
+* lvresize --fsresize --size+100MB /dev/mapper/ezmegaz    # FS növelés
+
+tune2fs -l ...dev...   # FS opciók listázása
+
+
+
+
+
+
+
+
+
+partprobe     -- partíciók felolvasása, ha a blkid nem látja jól 
+partx 
+
+
+
+
+# minimal install estén nincs rendes bash completion (stratis - vdo - nmcli - satöbbi)
+dnf install bash-completion
+
+uuidgen  -- általános uuid stringet generál 
+
+
+
+## Apache HTTPD
+
+#############
+###
+###  még elolvasandó
+###
+#############
+
+
+
+
+
+
+
+
+
+
+example Containerfile
+=====================
+FROM registry.access.redhat.com/ubi9/ubi:latest
+RUN dnf -y install httpd; dnf clean all; systemctl enable httpd;
+RUN echo "Successful Web Server Test" | tee /var/www/html/index.html
+RUN mkdir /etc/systemd/system/httpd.service.d/; echo -e '[Service]\nRestart=always' | tee /etc/systemd/system/httpd.service.d/httpd.conf
+EXPOSE 80
+CMD [ "/sbin/init" ]
+
+
+
+
+###########
+###
+###  GitHib RHCSA feladatlista
+###
+###########
+
+RPM GPG kulcsokat be kell húzni még az elején!!! Különben fura hibákat ad a dnf install
+rpmkeys --import /etc/pki/rpm-gpg/...
+
+
+User home könyvtár ha nem a /home alatt van, akkor SElinux lavel kell rá
+* NFS-re is?
+semanage fcontext -a -e /home /localhome    # legyen ugyanolyan (Equal) mint a /home
+restorecon -Rv /localhome
+
+
+find  -- jogosultságra keresés
+find -perm 1111    --> PONTOSAN erre a jog kombinációra keres
+find -perm -1111   --> a keresésből BÁRMELYIK bitre keres. Pl a -4000 a SETUID bittel rendelkező fájlokat találja meg
+
+
+
+SUDO:  Ezeket a beépített parancs aliasokat meg kell nézni:
+dba_admin: SOFTWARE, SERVICES, PROCESSES
+
+/ alatt executable script??
+A root könyvtárban létrehozott scriptet nem sikerült futtathatóvá tenni 
+==> semmi trükk. Csak a célcoportot is meg kell mondani: chmod +x   helyett   chmod ug+x
+
+
+27. Fix the web server on server1 and make sure all files are accessible. Do not make any changes to the web server configuration files. Ensure it's accessible from server2 and the client browser.
+==> nem értem a kérdést. De megnézem mindjárt  a gép leírást
+
+lvcreate --size 500m  -n platforms_lv  platfoems_vg
+
+
+swapon    -- önmagában kiadva az aktív swap-ok listája
+
+átnézendő
+stratis
+vdo (?)
+tuned
+re/nice
+
+SElinux / ausearch, audit2allow, setroubleshoot
+
+
+
+
+NetworkManager fusson bootkor -->   systemctl enable --now NetworkManager
+
+
+/etc/security/pwquality.conf  vs.  /etc/login.defs
+   --> jelszó minimum hossza melyikből érvényesül?
+
+
+22. feladathoz a chmod g+s miért kell?
+
+
+
+
+stratis mount opció fstab-ba:   x-systemd.requires=stratisd.service
+
+
+podman nem fut userként   -->   container-tools install után reboot (vagy a cri-o daemonok indítása)
+
+container image elnevezés:  podman build  -t (tag) ...
+container pélrány elneverés:    podman run --name sajátnév
+   könyvtár hozzárendelés:              -v /kinti/könyvtár:/benti/könyvtár:Z       (Z a SElinux tagelés miatt)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

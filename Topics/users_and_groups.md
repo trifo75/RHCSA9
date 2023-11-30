@@ -1,51 +1,60 @@
-chapter 3 - users and groups
-============================
+# users and groups
 
-default sudo log: /var/log/secure
+User database:
+* `/etc/passwd`  -- basic paramters of all users
+* `/etc/group`  -- basic list of groups
+* `/etc/shadow`  -- password hash storage
+* `/etc/gshadow`  -- password hashes for group change
 
-useradd inkább adduser kevésbé
-usermod
-userdel
+## create / modify users
+* `useradd`  (adduser seems deprecated)
+* `usermod`
+* `userdel`
 
-UID tartományok
+**UID ranges**  
 0            root
-1-200        system users, RedHat saját daemonjai
-201-999      system users, unprivileged, dynamic pool
-1000+        norma users
+1-200        system users, RedHat saját daemonjai  
+201-999      system users, unprivileged, dynamic pool  
+1000+        normal users  
 
-A tartományok a /etc/login.defs fájlban állíthatók
+These ranges can be set in `/etc/login.defs`
 
-system user/group létrehozásához -r ( --system ) kapcsoló kell
-groupadd ... -r 
-useradd ... -r
+To ctreate *system* user or group, use `-r` ( `--system` ) switch  
+`groupadd ... -r`  
+`useradd ... -r`  
 
-# Add multiple users at once
+## Add multiple users at once
 newusers command takes input from STDIN with these fields:  
 `pw_name:pw_passwd:pw_uid:pw_gid:pw_gecos:pw_dir:pw_shell`
 
+default sudo log: /var/log/secure
 
+## Password hash
 
-Password hash - $ jelekket elválaszott mezők
-  $ hash_alg_type $ salt $ hash
+There are fields in the pwd hash, separated with **$** signs  
+\$ hash_alg_type \$ salt \$ hash  
 
-  pl: $6$iX6QfU0C7NbPhxMa$JZ9dPMpoV4bb1a/sLhcCXGFkMSEvG81Aibsh68lhtRlemSlQH9XqXGmEwNCnATsE7Y0nU3dY/laejLluxFBUd.
-  hash_alg_type: 6   -> SHA512
-  salt: iX6QfU0C7NbPhxMa
-  a hash a maradék
+loke: $6$iX6QfU0C7NbPhxMa$JZ9dPMpoV4bb1a/sLhcCXGFkMSEvG81Aibsh68lhtRlemSlQH9XqXGmEwNCnATsE7Y0nU3dY/laejLluxFBUd. 
+* hash_alg_type: 6   -> SHA512  
+* salt: iX6QfU0C7NbPhxMa  
+* rest is the hash itself  
 
-LDAP / KERBEROS authentikációhoz
-  * sssd daemon kell (system security secices daemon) - külön telepítendő
-  * beállítás kézzel, vagy authconfig paranccsal. Ebből van authconfig-tui és authconfig-gtk verzió is
-    azokban menüből lehet állítgatni
-  * krb5-workstation is utólag telepítendő
+To use LDAP / KERBEROS authentication
+* sssd is needed (system security secices daemon) - need to be installed
+* can be set manually, or using `authconfig` - there are tui and gtk versions with menus
+* `krb5-workstation` package needed
 
-    kerberos KDC = key distribution center
+( kerberos KDC = key distribution center )
 
-IPA authentikációhoz
-  * authconfig vagy ipa-client-install
+IPA authentication
+  * `authconfig` or `ipa-client-install`
 
-AD authentikációhoz
-  * autconfig és winbind vagy realmd, de inkább az utóbbi
+AD authentication
+  * `autconfig` and `winbind` or `realmd`, latter is better
 
-Alapban teljes névvel kell belépni (IPA esetén user@ipa.domain.com, AD esetén DOMAIN\user) de kikapcsolható:
+You must use your full auth name (IPA: user@ipa.domain.com, AD: DOMAIN\user) but this may be disabled:
   sssd.conf:  use_fully_qualified_names = no
+
+# container related
+
+there are `/etc/subgid` and `/etc/subuid` files to assign ranges for user namespace (uid mapping) when running containers. Usually they exist. On user mapping errors you may chech them.

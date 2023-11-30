@@ -72,6 +72,16 @@ You can have a shell inside the conatinar, and so on
 Also you can detach from a container and let it run in background - like in *tmux*. The key combo is: *CTRL-P - CTRL-Q*
 You can reattach to such a container using `podman attach container_id`
 
+### User id-s in running containers
+
+Podman is superior of docker as it is *daemonless* and  can run containers in user mode: *rootless containers*. There is an UID mapping between host and container.
+
+
+
+### Setting fs rights for shared directories
+
+**TODO** 
+ 
 ## Querying images
 
 `podman ps` gives a list of running container instances
@@ -113,3 +123,12 @@ RUN mkdir /etc/systemd/system/httpd.service.d/; echo -e '[Service]\nRestart=alwa
 EXPOSE 80
 CMD [ "/sbin/init" ]
 ```
+
+## Behind the scenes
+
+Setting correct SELinux type for the mounted directories: **THIS IS NOT WORKING, use :Z at the end of directory mounts instead**
+`semanage f_ -t container_file_t my_dir_to_be_mounted`
+`restorecon -Rv my_dir_to_be_mounted`
+
+Containers to be able to started by systemd this boolean should be enabled
+`setsebool -P container_manage_cgroup on`
