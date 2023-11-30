@@ -7,6 +7,7 @@ Preparing for RHCSA exam on RHEL9
 - [Mounting remote filesystems](./Topics/remote_fs.md)
 - [Containers](./Topics/containers.md)
 - [Basic kernel management](./Topics/basic_kernel_mgmt.md)
+- [Software management with DNF](./Topics/dnf.md)
 
 ## Topics in progress
 - [Users and groups](./Topics/users_and_groups.md)
@@ -22,7 +23,6 @@ Preparing for RHCSA exam on RHEL9
 - [Logging: rsyslog and journald](./Topics/logging.md)
 - [Systemctl](./Topics/systemctl.md)
 - [GRUB & troubleshooting grub](./Topics/grub.md)
-- [Software management with DNF](./Topics/dnf.md)
 - [Software management with RPM](./Topics/rpm.md)
 - [](./Topics/)
 - [](./Topics/)
