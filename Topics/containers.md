@@ -77,7 +77,6 @@ You can reattach to such a container using `podman attach container_id`
 Podman is superior of docker as it is *daemonless* and  can run containers in user mode: *rootless containers*. There is an UID mapping between host and container.
 
 
-
 ### Setting fs rights for shared directories
 
 **TODO** 
@@ -99,7 +98,7 @@ Podman is superior of docker as it is *daemonless* and  can run containers in us
 * /var/lib/containers/storage -- root permanent
 * /home/username/.local/share/containers/storage   -- normal user - this has to be under the user's home directory (for SELinux reasons) 
 
-# Getting extra info
+## Getting extra info
 `podman info` 
 Displays a lot of settings, including the list of defined registries
 
@@ -107,14 +106,14 @@ Displays a lot of settings, including the list of defined registries
 Searching for images with name matching to ...string...  
 with `--comatible` also shows ratings (stars).  (compatible to docker registries)
 
-# Building custom container images
+## Building custom container images
 Create a directory, switch to it ad create a file named `Containerfile` 
 
 `podman build -t name_of_new_image:tag_of_new_image .`  - note the `.` at the end!
 This processes the contents of *Containerfile* and save the result as a new image to the local storage. 
 In the background `buildah` command is called.
 
-# Example Containerfile
+## Example Containerfile
 ```
 FROM registry.access.redhat.com/ubi9/ubi:latest
 RUN dnf -y install httpd; dnf clean all; systemctl enable httpd;
@@ -123,6 +122,21 @@ RUN mkdir /etc/systemd/system/httpd.service.d/; echo -e '[Service]\nRestart=alwa
 EXPOSE 80
 CMD [ "/sbin/init" ]
 ```
+
+## Running containers as a service
+Podman has the option to generate *service unit* files for systemd. This can be done both root containers and rootles ones.  
+For root containers you have to generate service file in the `/etc/systemd/user` directory and then reload systemd and enable the new service. 
+ 
+For rootless containers, the process is longer:
+* As root, turn on lingering for the user: `loginctl enable-linger cindy`
+* **Log in with that user!** Su or sudo will not work! 
+* Create your container as above, using `podman run --rm --name cindy-web ...`. Let's use name *cindy-web*. `--rm` should be added, to free up the name on shutdown. 
+* Create a directory for systemd unit files: `mkdir -p ~/.config/systemd/user`
+* **NOW the essence:** Create the service file with `podman generate systemd --new --name cindy-web > ~/.config/systemd/user/cindy-web.service`
+* stop and delete cindy-web container
+* Load the newly generated systemd user config: `systemctl --user enable --now cindy-web.service`
+* Now you should see your container running, started by systemd. Reboot, and check that the container starts automatically. 
+
 
 ## Behind the scenes
 

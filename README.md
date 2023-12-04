@@ -24,5 +24,3 @@ Preparing for RHCSA exam on RHEL9
 - [Systemctl](./Topics/systemctl.md)
 - [GRUB & troubleshooting grub](./Topics/grub.md)
 - [Software management with RPM](./Topics/rpm.md)
-- [](./Topics/)
-- [](./Topics/)
