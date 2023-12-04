@@ -7,10 +7,10 @@ Native management command is `nftables`, but there is a much
 better alternative: `firewalld` and `firewall-cmd`.
 This handles wee all inbound and outbound traffic and theyr dependencies. (It's like the relation between `rpm` and `dnf` commands)
 
-# firewalld prerequisites
+## firewalld prerequisites
 `firewalld` must be installed and enabled in systemd. When it is running, it loads the config from `/usr/lib/firewalld/...` and `/etc/firewalld/...`
 
-# basic definitions
+## basic definitions
 
 - **zone** is a group of interfaces with similar functions and a collection of rules that apply to the traffic on them. Like connecting to the internet, connecting to proxy, etc. When you have just one interface, most probably you will have just one zone active. There are multiple zones in the config and you can activate them a needed. 
 - **service** is a connection of network traffic directions (inbound ports mostly) that are needed to serve a specific service. Like to serve `sshd` you need to let client connect to TCP port 22. You can add services to zones to simplify management.
@@ -22,7 +22,7 @@ Alternatively you can run `firewall-cmd --runtime-to-permanent` to save the runn
 
 **QUESTION** - how do I know the differences between the running system and the config files?
 
-# Managing zones
+## Managing zones
 
 - `firewall-cmd --get-default-zone` -- shows default zone. Most probably itt will be *public*
 - `firewall-cmd --get-zones` -- shows all defined zones from the config files
@@ -31,14 +31,14 @@ Alternatively you can run `firewall-cmd --runtime-to-permanent` to save the runn
 - `firewall-cmd --list-all` -- shows all info about the zones in effect
 - `firewall-cmd --list-all --zone=...` -- shows all info about the specified zone 
 
-# managing services
+## managing services
 
 - `firewall-cmd --get-services` -- list name of all defined services from `/usr/lib/firewalld/services/` and `/etc/firewalld/services/`
 - `firewall-cmd --info-service=...` -- detailed info about a specific service
 - `firewall-cmd --service=http --add-port 8080/tcp --permanent` -- extend the port list of *http* service and saves the change into config.
 - `firewall-cmd --` -- 
 
-# Others
+## Others
 
 You can manage ports in similar ways. Most times modifiing services seems better for me. 
 
@@ -47,3 +47,4 @@ Most options are like this:
 `--list-XXX` -- items from the running config
 
 **TODO** info about logging 
+

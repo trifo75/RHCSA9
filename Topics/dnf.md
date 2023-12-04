@@ -1,7 +1,7 @@
 # Package management with DNF
 `dnf` is used to manage software packages/groups/modules
 
-# subscriptions
+## subscriptions
 In RHEL you need to have a valid subscription to be able to access RedHat repositories. To introduce your server to RedHat, you have
 to use `subscription-manager register` then provide username and password of you RedHat subscription. This automatically
 sets up repositories available to you. If it is not needed, you can `unregister` your host. 
@@ -9,7 +9,7 @@ sets up repositories available to you. If it is not needed, you can `unregister`
 RHEL will complain about the need of registration. To avoid this you can disable the warning with `subscription-manager config --rhsm.auto_enable_yum_plugins=0`
 or put `enabled=0` into `/etc/dnf/plugins/subscription-manager.conf`
 
-# repositories
+## repositories
 Repos are software packages collected in a bucket. They are represented by entries in `/etc/yum.repos.d/*.repo` files. The `repo` sufix is important. They can reside on disk (local, optical, network, ...) or accessible through http(s) protocol. The basic elements of a repository definition are like this:  
 
 `[BaseOS]`  -- repo ID 
@@ -36,7 +36,7 @@ Quick way to define a repository:
 * `createrepo ...`  -- builds repo metadata for downloaded packages
 
 
-# packages
+## packages
 RHEL mostly uses RPM package format. For individual package management, there is `rpm` command. This *does not* handle dependency issues. Alternatively you can use `dnf localinstall` or in recent RHEL simply `dnf install` to install locally available RPM packages. 
 
 * `dnf download *<pkg_name>*`  -- download a package into local storage
@@ -47,7 +47,7 @@ RHEL mostly uses RPM package format. For individual package management, there is
 
 A `--repo ...` switch can be used to specify the source of installation.
 
-# groups
+## groups
 Package groups are bundles which are part of a specific setup.
 Environement groups are like **Server with gui** or **minimal install**. Other groups bundle software pieces around a specific topic, like **Legacy UNIX Compatibility**.
 
@@ -58,7 +58,7 @@ Environement groups are like **Server with gui** or **minimal install**. Other g
 
 A `--repo ...` switch can be used to specify the source of installation.
 
-# modules
+## modules
 Modules are like software components of multiple packages bound together, like *postgresql*. A module can have multiple *streams*, which are like major versions. You have to select which one to install. Under streams, there may be *profiles* which are like environement groups, just on module level. Like *client/server/minimal*
 
   statuses:  [d]default  [e] enabled  [x] disabled  [i] installed
@@ -71,7 +71,7 @@ Modules are like software components of multiple packages bound together, like *
 default: if nothing is enabled, this will be selected - and also enabled automatically - on install (repo default)
 enabled: thist is selected to install from (only *one* stream can be enabled at a time)
 
-# logs and history
+## logs and history
 
 Mainly the dnf operations are logged into `/var/log/dnf.log`  
 
@@ -80,7 +80,7 @@ Also executed operations can be listed/managed using `dnf history` command.
 * `dnf history info 9`  -- details on the 9-th operation
 * `dnf history undo/redo 9`  -- undo/redo 9-th operation
 
-# searching and metadata
+## searching and metadata
 
 * `dnf clean  _metadata_fajta_`  -- invalidate metadata cache
 * `dnf makecache`  -- download and build package version cache
