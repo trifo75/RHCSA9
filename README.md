@@ -10,6 +10,7 @@ Preparing for RHCSA exam on RHEL9
 - [Containers](./Topics/containers.md)
 - [Basic kernel management](./Topics/basic_kernel_mgmt.md)
 - [Software management with DNF](./Topics/dnf.md)
+- [VDO on LVM](./Topics/lvm-vdo.md)
 
 ## Topics in progress
 - [SELinux](./Topics/selinux.md)
