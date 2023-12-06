@@ -32,5 +32,5 @@ Formatting thin volume to EXT4 - same apply here
 Also `vdostats` command can query detailes stats.
 
 ## turn compression and deduplication on and off for a VDO pool
-`lvchange --compression y|n  vg-name/vdopoolname` turn compression on/off 
+`lvchange --compression y|n  vg-name/vdopoolname` turn compression on/off  
 `lvchange --deduplication y|n vg-name/vdopoolname` turn deduplicatio on/off
