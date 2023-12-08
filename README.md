@@ -11,9 +11,9 @@ Preparing for RHCSA exam on RHEL9
 - [Basic kernel management](./Topics/basic_kernel_mgmt.md)
 - [Software management with DNF](./Topics/dnf.md)
 - [VDO on LVM](./Topics/lvm-vdo.md)
-
-## Topics in progress
 - [SELinux](./Topics/selinux.md)
+
+## Topics to work on yet
 - [Configuring network](./Topics/network_config.md)
 - [Managing swap](./Topics/swap.md)
 - [Managing local filesystems](./Topics/filesystems.md)

@@ -1,91 +1,124 @@
-## SELinux
+# SELinux
 
-policy - maga a szabálygyűjtemény
+**policy** - The set of rules to be enfoced  
 
-Módok:
-disabled   --   ha a kernel cmdline-nél volt "selinux=0", akkor teljesen off, amúgy csak inaktív
-enforcing  --   a szabálygyűjtemény érvényesítése
-permissive --   szabálysértés esetén csak logolás. Hibakeresésre nagyon jó. NE HAGYD ÍGY!!!
+Modes of operation:
+* *enforcing*  --   this is the normal mode, the rules in policy are forced, violations are prohibited and reported
+* *permissive* --   in this mode policy rules are checked and violations are reported. Good for troubleshooting. DO NOT LEAVE SYSTEM IN THIS MODE
+* *disabled*   --   not enforcing and not logging policy violations, but the system itself is active in the kernel and loaded. If you need to switch off SELinux completely, use `selinux=0` on kernel cmdline (and/or `enforcing=0`). 
 
-log:  /var/log/audit/audit.log    -->   type=AVC  kezdetű sorok érdekesek
+## seting modes
+SELinux config file is `/etc/sysconfig/selinux`. Two main option is:  
+`SELINUX=mode` - where mode can be enforcing/permissive/disabled  
+`SELINUXTYPE=type` - where type can be targeted/minimum/mls
 
+Also there are kernel cmdline options:  
+`selinux=0` - do not even load selinux into kernel  
+`enforcing=0` - set permissive mode during boot - good for root password recovery  
+You can use `grubby` to set kernel cmdline options permanently, or edit cmdline during boot in GRUB phase.
 
-config: /etc/sysconfig/selinux   -- itt van beállítva az SELINUX mód és a SELINUXTYPE üzemmód
-                                    disabled/enforcing/permissive         targeted/minimum/mls
+In the running system you have these commands  
+`getenforce` -- query operating mode (enforcing/permissive/disabled)  
+`setenforce` -- set mode temporarily (Enforcing/Permissive)  
+`sestatus -v` -- get detailed SELinux status info
 
-grubby-val kapcsolható, hogy az egyes kerneleknél legyen "selinux=0" vagy ne
+`sepolicy generate`   -- build policy files for not yet existing config 
 
+## logging
+Main log is `/var/log/audit/audit.log` check lines starting with `type=AVC`
 
-getenforce    -- megmondja, hogy él-e a SElinux
-setenforce    -- ideiglenes üzemmód váltás (Enforcing/Permissive)
-sestatus -v   -- részletesebb státusz infó (az aktuális környezetről)
+There are also entries about policy violations in `/var/log/messages`
 
-sepolicy generate   -- policy összeállítása még nem létező konfighoz 
+Extra info can be obtained using `sealert` - you have to install `setroubleshoot-server` which will monitor policy violations and give detailed info, along with repair advices. You will find lines like below in `/var/logmessages`:  
+```
+Dec  8 08:39:13 localhost setroubleshoot[7802]: SELinux is preventing /usr/bin/dash from read access on the file /usr/lib/x86_64-linux-gnu/libc.so.6. For complete SELinux messages run: sealert -l 9e61dd45-1ffa-4a53-a265-82cfa096a81c
+```  
 
-# file context lekérdezése
-sok parancs támogatja a -Z kapcsolót, ami megmutatja a context-et
+Every policy violation will get a UUID and you can use `sealert -l 9e61dd45-1ffa-4a53-a265-82cfa096a81c` to show specific advices and info. (The command and UUID are from the log line)
 
+## managing file context
+Every file has a secirity label which can be queryed using `ls -Z file`. (Also a lot of commands support `-Z` to handle labels)
+```
 [root@lab-repo audit]# ls -dZ /var
-system_u:object_r:var_t:s0 /var      ==> ebből a _t végű érdekes. A _u (user) és _r (role) résszel most nem dolgozunk
+system_u:object_r:var_t:s0 /var
+```
+It is like `system_u` user, `object_r` role and `var_t` type. Now, we concentrate on *types*.
 
-context beállítása:
+File context is mainly stored in the policy and are applied to files by *autorelabel* process, *restorecon* command, or file creation (inheritance)
 
-                  add
-                     type
-                                                                   a file/könyvtár, amire vonatkozik (regex)
-                                                                   itt a /mydir és alatta minden
-semanage fcontext -a -t <file context, amit már tudunk valahonnan> "/mydir(/.*)?"
-restorecon -v -R /mydir
-# a semanage csak a policy-t állítja be a fájlokra azt érvényesíteni kell, erre van a restorecon
-# .autorelabel fájl ha van, akkor boot-kor a policy alapján minden contextet felülír
+Auto relabeling occurs during boot, if the system finds a hidden file called `.autorelabel` in the FS root. In this case SELinux labels are restored to all files in the FS from the policy. There mingh be some circumstances when the system initiates autorelables by itself, that's why using `chcon` is heavily discouraged. 
 
-man semanage-fcontext   -- sok jó példa
+`restorecon` command can be used to apply labels to individual files according to the policy settings.
 
-chcon kerülendő!!!  (csak az fs-be íg, a policyba nem, így relabel után felülíródik)
+Creating new files also creates new labels on them, labels are inherited from the directory containing the new file. Copying a file sets the label according to the target dir. *Warning*: moving a file keeps it's original labels which might cause problems (like moving files into web content dir - the webserver will be prohibited to serve them.)
 
-### ha a webroot context-je nem jó, akkor hogyan szolgál ki az eredeti webroot alól???
+## setting file context
+You should first set labels in the policy using `semanage fcontext` and then apply them to the files using `restorecon`. You can find good examples in `man semanage-fcontext` man page.
 
-## webroot áthelyezése
-# webroot előkészítés
-mkdir /new_webroot
-semanage cfontext -a -t httpd_sys_content_t "/new_webroot(/.*)?"
-restorecon -R -v /new_webroot
+`semanage fcontext -a -t <file context> "/mydir(/.*)?"` 
+`-a` is for *add*  
+`-t` is for *type* - you can check on other files
+the end part is a regex to select files to apply rule to. In this case *"/mydir" and everything below*
 
-# httpd konfig
-DocumentRoot "/new_webroot"
-<Directory "/webcontent">
+When the policy is ready, you can apply the rules to the files like  
+`restorecon -vR /mydir`  
+`-v` is for *verbose*, every file is listed along with the applied label  
+`-R` is for *recursive*  
+
+## fcontext example: create non-standard webroot directory
+Preparation: look up the type to set. Check the label on the original webroot directory (most probably /var/www/html):  
+```
+[root@server2 ~]# ls -ldZ /var/www/html
+drwxr-xr-x. 2 root root system_u:object_r:httpd_sys_content_t:s0 6 Mar 29  2023 /var/www/html
+```
+So you have to use *httpd_sys_content_t* type. Now create a new target directory and apply the label
+```
+[root@server2 ~]# mkdir /mywebroot
+[root@server2 ~]# semanage fcontext -a -t httpd_sys_content_t "/mywebroot(/.*)?"
+[root@server2 ~]# restorecon -vR /mywebroot
+Relabeled /mywebroot from unconfined_u:object_r:default_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
+```
+Now you Apache httpd can use this directory to serve content from. Use this snippet in the *httpd.conf* 
+```
+DocumentRoot "/mywebroot"
+<Directory "/mywebroot">
     AllowOverride None
-    Require all granted       # enélkül nem lehet olvasni
+    Require all granted       # give read permission
 </Directory>
+```
+and then reload httpd config.
 
-systemctl enable --now httpd    (vagy csak apachectl graceful, ha már fut)
+## managing selinux ports
+SELinux also applies security labels on network ports. The current settings can be listed using `semanage port -l`. If you want to run your service on non-standard ports, you wil need to label that port with the appropriate type, which can be get from the port list. 
 
+**QUESTION** -- is this for privileged ports? Why not applied to containers? Can I run httpd on an arbitrary high port without labeling?
 
-## httpd listen port áthelyezés
-#httpd config 
-Listen 87
-# aztán graceful
+## port example: setting non-standard port for Apache httpd
+Let's configure Apache to serve on port 87. Edit *httpd.conf* to include `Linten 87` directive. 
 
-semanage port --add --type http_port_t --proto tcp 87   # nem kell restorecon
-firewall-cmd --permanent --service=http --add-port 87/tcp
-firewall-cmd --reload                                   # itt kell restart
+Look up the port type to be set (port 80):
+```
+[root@server2 ~]# semanage port --list | grep -w 80
+http_port_t                    tcp      80, 81, 443, 488, 8008, 8009, 8443, 9000
+```
 
-ss és netstat paranccsal látszik ,hogy figyel a 87-en 
+Apply the appropriate label to the target port:  
+`semanage port --add --type http_port_t --proto tcp 87`  
+This happens immediately, no need to restore, like fcontext. 
 
-# Selinux boolean beállítások
-# akár sok rule-ra érvényes kapcsolók
+Now reload httpd config (graceful). The server will be able to bind to the new port. 
 
-getsebool -a            -- az összes lekérdezése
-setsebool param on/off  -- kapcsoló állítása NEM PERMANENS, csak a -P kapcsolóval
+Finally set firewall rules:  
+`firewall-cmd --service=http --add-port tcp/87 --permanent`  
+`firewall-cmd --reload`
 
-semanage boolean -l     -- összes érték listázása aktív és policy is
+Now `ss` or `netstat` commands show 
 
+## SELinux boolean settings
+There are boolean switches which can have effect on many rules in the policy. You can list them using
+* `semanage boolean -l` including default (policy) value, current value and a short description
+* `getsebool -a` for just the options and theyr current value
 
-
-# logelemzéshez segítség:
-sealert      (lehet, hogy telepíteni kell: setroubleshoot-server)
-
-daemon, ami olvassa az audit.log-ot és jól (jobban) olvasható bejegyzéseket készít 
-belőle a journalctl alá
-aztán sealert -l {id} parancs generál részletes útmutatót
-
+Setting values:
+* `setsebool param on/off` setting value temporarily. For permanent change use `-P` switch as well. 
+* `semanage boolean --modify ...` permanent change in the policy
