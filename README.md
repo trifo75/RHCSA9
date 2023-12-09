@@ -7,6 +7,7 @@ Preparing for RHCSA exam on RHEL9
 - [Firewall](./Topics/firewall.md)
 - [Time](./Topics/time_services.md)
 - [Managing swap](./Topics/swap.md)
+- [Logging: rsyslog and journald](./Topics/logging.md)
 - [Mounting remote filesystems](./Topics/remote_fs.md)
 - [Containers](./Topics/containers.md)
 - [Basic kernel management](./Topics/basic_kernel_mgmt.md)
@@ -21,7 +22,9 @@ Preparing for RHCSA exam on RHEL9
 - [LVM](./Topics/lvm.md)
 - [Partitioning](./Topics/partitioning.md)
 - [System tuning](./Topics/system_tuning.md)
-- [Logging: rsyslog and journald](./Topics/logging.md)
 - [Systemctl](./Topics/systemctl.md)
 - [GRUB & troubleshooting grub](./Topics/grub.md)
 - [Software management with RPM](./Topics/rpm.md)
+
+## Missing topics
+- Scheduling jobs: at, cron and anacron

@@ -1,37 +1,35 @@
 ## rsyslog
-conf:
-  /etc/rsyslog.conf és /etc/rsyslog.d
+The replacement service of traditional **syslog**
 
-alap cél:
-  /var/log/...
+conf:  
+  `/etc/rsyslog.conf` and `/etc/rsyslog.d`
 
-modulok:
-  imjournal  -- input module journalctl
-  imuxsock    -- input module unix socket (hagyományos syslog)
-  omfile     -- output module FILE
-  omusrmsg   -- output module user message - mindenkinek üzenet
+mostly writes logs under `/var/log/...`
 
-input selection:
-  facility.severity;facility.severity...
+modules (*im...* - input module and *om...* - output module):  
+  `imjournal`  -- input module journalctl  
+  `imuxsock`    -- input module unix socket (traditional syslog)  
+  `omfile`     -- output module FILE  
+  `omusrmsg`   -- output module user message - message to everyone  
 
-vannak még parser, modification, string generator, meg más modulok is
+input selection (fac.sev pairs, delimited with semicolons):  
+  `facility.severity;facility.severity...`
 
-ss : Socket Statistics
-  -n   -- don't resolve services (port names)
-
-anacron naponta futtatja a logrotate-t (/etc/logrotate.conf és .d alapján)
--> a /var/log alatt a definiált cuccok rotálódnak
+There are also modules for parsing, modification, string generation and so on
 
 ## systemd.journald
-konfig: /etc/systemd/journald.conf 
-  storage: auto  -- ha van perm. stor. könyvtár, akkor oda is ír
-  alapban elvileg havonta rotál (?) de van maxfilesize meg rokonai 
-journalctl   -- system log lekérdezése
+`journald` collects system logs. Can be queryed using `journalctl` command
 
-/run/.../journal alatt gyűlik alapban csak memóriában
+config: `/etc/systemd/journald.conf`   
+*  storage: auto  -- if the permanent storage dir - `/var/log/journal` exists, writes logs there too. There is a monthly logrotate and max filesize.
+* default in-memory log storage: `/run/.../journal` 
 
-journalctl -o verbose    -- összes mezőt kiírja. Mező nevekre is lehet keresni:
-journalctl _SYSTEMD.UNIT=sshd.service   -- csak az sshd üzenetei
+`journalctl -o verbose` -- displays ALL fields from log. You can apply filters, like
+
+`journalctl _SYSTEMD.UNIT=sshd.service` -- entries from *sshd* only
 
 
-## dmesg ??? a /var/log/boot.log fájlt ki olvassa?
+**QUESTION** dmesg ??? Who's reading /var/log/boot.log file?
+
+*anacron* should run logrotate daily (according to `/etc/logrotate.conf` and `/etc/logrotate.conf.d`)
+This rotates logs under `/var/log`
