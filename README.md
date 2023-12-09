@@ -6,6 +6,7 @@ Preparing for RHCSA exam on RHEL9
 - [sshd](./Topics/sshd.md)
 - [Firewall](./Topics/firewall.md)
 - [Time](./Topics/time_services.md)
+- [Managing swap](./Topics/swap.md)
 - [Mounting remote filesystems](./Topics/remote_fs.md)
 - [Containers](./Topics/containers.md)
 - [Basic kernel management](./Topics/basic_kernel_mgmt.md)
@@ -15,7 +16,6 @@ Preparing for RHCSA exam on RHEL9
 
 ## Topics to work on yet
 - [Configuring network](./Topics/network_config.md)
-- [Managing swap](./Topics/swap.md)
 - [Managing local filesystems](./Topics/filesystems.md)
 - [Stratis](./Topics/stratis.md)
 - [LVM](./Topics/lvm.md)
