@@ -4,6 +4,7 @@ Preparing for RHCSA exam on RHEL9
 ## Topics 
 - [Users and groups](./Topics/users_and_groups.md)
 - [sshd](./Topics/sshd.md)
+- [Configuring network](./Topics/network_config.md)
 - [Firewall](./Topics/firewall.md)
 - [Time](./Topics/time_services.md)
 - [Managing swap](./Topics/swap.md)
@@ -16,7 +17,6 @@ Preparing for RHCSA exam on RHEL9
 - [SELinux](./Topics/selinux.md)
 
 ## Topics to work on yet
-- [Configuring network](./Topics/network_config.md)
 - [Managing local filesystems](./Topics/filesystems.md)
 - [Stratis](./Topics/stratis.md)
 - [LVM](./Topics/lvm.md)
