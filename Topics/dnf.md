@@ -12,15 +12,15 @@ or put `enabled=0` into `/etc/dnf/plugins/subscription-manager.conf`
 ## repositories
 Repos are software packages collected in a bucket. They are represented by entries in `/etc/yum.repos.d/*.repo` files. The `repo` sufix is important. They can reside on disk (local, optical, network, ...) or accessible through http(s) protocol. The basic elements of a repository definition are like this:  
 
-`[BaseOS]`  -- repo ID 
-`name=Red Hat Enterprise Linux 9.0 BaseOS RPMs (DVD)`  -- repo name
-`metadata_expire=-1`  -- metadata validity time
-`enabled=1`  -- will be seen in default list or not
-`gpgcheck=1`  -- will try to check packages for integrity or not
-`baseurl=file:///var/www/html/repo/BaseOS/`  -- location/dierctory of repository data structure
+`[BaseOS]`  -- repo ID  
+`name=Red Hat Enterprise Linux 9.0 BaseOS RPMs (DVD)`  -- repo name  
+`metadata_expire=-1`  -- metadata validity time  
+`enabled=1`  -- will be seen in default list or not  
+`gpgcheck=1`  -- will try to check packages for integrity or not  
+`baseurl=file:///var/www/html/repo/BaseOS/`  -- location/dierctory of repository data structure  
 `gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release`
 
-If you want to check your packages you may need to get gpg keys (most probably they are installed in `/etc/pki/rpm-gpg` dir) and import them using `rpmkeys --import` command
+If you want to check your packages you may need to get gpg keys (most probably they are installed in `/etc/pki/rpm-gpg` dir) and import them using `rpmkeys --import ...` command
 
 There are mostly 2 types of RHEL repos: **BaseOS** and **AppStream**, holding core OS elements and auxiliary software respectively.
 
@@ -91,3 +91,8 @@ Also executed operations can be listed/managed using `dnf history` command.
 
 * `dnf update kernel`  -- updtate kernel packages only
 * `dnf update -x kernel`  -- exclude kernel packages from update
+
+
+## additional repositories 
+* **EPEL** - Extra Packages for Enterprise Linux (Fedora mainly)
+* **COPR** - COmmunity PRojects

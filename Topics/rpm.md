@@ -1,31 +1,34 @@
-PACKAGE MANAGEMENT
+# RPM package management
 
-database: /var/lib/rpm
+RPM is the basic package management solution under YUM/DNF. It uses `rpm` command.    
+Database is stored under `/var/lib/rpm`
 
-rpm -> yum -> dnf
+Rpm by itself does not resolve dependencies, just checks them. 
 
-list rpm dependencies
--q --whatprovides
--q --whatrequires
+## querying info
 
--qip (-q --info --package) csomagméret, verzió, aláírás, satöbbi lekérdezése  - rpm csomagról
--qi  (--query --info) mindenféle infó lekérés telepített csomagról 
+Querying is done with `-q` switch
 
-rpm2cpio csomag.rpm | cpio -dium   - csomagból fájlok kivétele
+* list rpm dependencies
+    * `-q --whatprovides`
+    * `-q --whatrequires`
 
-telepített fájlok (csomagok) ellenőrzése
-rpm -V csomag      - telepített fájlok attributumainak ellenőrzése
+* get info on packages
+    * `-qip` (-q --info --package) get info on RPM package size, version, signature, etc - from *installable package files*
+    * `-qi`  (--query --info) get detailed info on *installed* package 
 
-repo definícióban elérés:
-baseurl=file:///mnt/mittomen      - // utan még egy /
-baseurl=http://example.com/...    - normál URL
+## manipulating packages
 
-DNF konfig:
-/etc/dnf/dnf.con
+* copy files from an RPM package file
+    * `rpm2cpio my-package.rpm | cpio -dium`
 
-EPEL - Extra Packages for Enterprise Linux (Fedora főleg)
-COPR - COmmunity PRojects
+* Checking attributes of installed packages
+    * `rpm -V csomag`
 
-Repo file dir:
-/etc/yum.repos.d
+## installing packages
 
+TODO
+
+## removing packages
+
+TODO
