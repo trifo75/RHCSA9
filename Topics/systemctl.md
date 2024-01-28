@@ -1,31 +1,55 @@
-### systemctl 
+# using systemd  
 
-systemctl                  -- az aktuális betöltött unitok listája
-systemctl --all            -- az ÖSSZES unit listája
-systemctl --failed         -- hibára futott unitok
+**systemd** replaces the old SystemV init process - and does much more. Manages loading services, mounting filesystems and scheduling tasks and so on. The basic building blocks are **unit files**, which defines tasks to do and the order of them. systemd works in a parallel manner, which makes booting way faster.
 
-valami.socket              -- ugyanilyen nevű valami.service vezérlő socketje
-valami.d                   -- ugyanilyen nevű unitból csak snippeteket felülíró kis részletek
+## unit files
 
-systemctl list-dependencies  [service name] -- hierarchikus lista a service-ekről (teljes fa vagy csak az adott service)
-systemctl status [service]  -- státusz infó. Ebben szerepel a tényleges unit file, doc link, fut/nem, pid, stb
+File locations:
+* **/usr/lib/systemd/system** - factory default units
+* **/etc/systemd/system** - custom system unit files (for root)
+* **(user homedir)/.config/systemd/user** - custom units for nonprivileged users - needs *linger* option to start automatically
 
-## a syslog sercice csak egy link az rsyslog-ra. Ha disable-olom, akkor törli, de enable onnan nincs. WTF? 
-   --> a syslog egy alias az rsyslog-ra 
+In the /etc/... you can override files from /usr/lib/...
 
-          enable    -- az [install] szekció "WantedBy" paraméterében meghatározott target-be csinál symlinket
-          disable
-          is-enabled
-          is-disabled
-          is-active
-          stop / start
-          mask / unmask     -- ott marad, csak elrejtve
+You can use directory /etc/systemd/system/**some_unit.d** to override *just parts* from the unit file of the same name.
 
-.target-ek : gyűgtemény, mint az INIT-nél a runlevel-ek
-systemctl -t target     -- target-ek listája
-           get-default  -- igen, az. 
-           set-defailt  -- csinál egy linket a megadott targetre. Ebbe bootolunk innentől 
+Socket unit type: **some_unit.socket** is the communication socket defined for the *service* unit of the same name.
 
-systemctl isolate multi-user   -- átváltás másik targetre - graphical vs multu-user. Csak ha AllowIsolate=yes
+## targets
+
+They are the unit files with extension **.target**. Are similar to *runlevels*. They are a collection of units which need to run to reach a specific state of the system. Some can be triggered with the **systemctl isolate** command
+
+* **systemctl -t target** - list all targets
+* **systemctl get-default** - show the default system state. Used to be *multi-user* or *graphical*
+* **systemctl set-default** - set the default system state.
+* **systemctl isolate multi-user**   -- switch to another target like *graphical* vs *multi-user*. Only of **AllowIsolate=yes** is set in the unit file
+
+## management commands
+
+* **systemctl** - lists all *loaded* unit files
+* **systemctl --all** - lists all units from everywhere (for root)
+* **systemctl --failed** - lists units with *failed* status
+* **systemctl list-dependencies  [service name]** - structured list of the serviced (full tree or just a specific service)
+* **systemctl status [service]**  - service status info. Shows
+   * actual unit file location
+   * link to documentation
+   * is running or not
+   * PID
+   * etc...
+
+(**syslog** is just a link for **rsyslog**. If you disable, you can not enable on this name)
+
+## controlling units
+
+all entries below are used a *systemctl COMMAND UNIT*
+* **enable** - creates a symlink into the *systemd target* directory, which is specified in the *WantedBy* parameter of the *install* section. Therefore the unit will be running before the target is reached.
+* **disable** - deletes the symlink, so the unit will not run automatically. Unless it is defined as a requirement in another unit file 
+* **is-enabled** - query if the unit is enabled
+* **is-disabled** - query if the unit is disabled
+* **is-active** - query if the unit is in running state (?)
+* **mask** / **unmask** - if you mask an unit it will be fully hidden from other units, so they won't run, even if defined as requirement
+* **start** / **stop** - start and stop an unit manually
+
+
 
 

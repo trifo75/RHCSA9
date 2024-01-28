@@ -11,6 +11,7 @@ Preparing for RHCSA exam on RHEL9
 - [Managing swap](./Topics/swap.md)
 - [Logging: rsyslog and journald](./Topics/logging.md)
 - [Mounting remote filesystems](./Topics/remote_fs.md)
+- [Systemctl](./Topics/systemctl.md)
 - [Containers](./Topics/containers.md)
 - [Basic kernel management](./Topics/basic_kernel_mgmt.md)
 - [Software management with DNF](./Topics/dnf.md)
@@ -22,7 +23,6 @@ Preparing for RHCSA exam on RHEL9
 - [Stratis](./Topics/stratis.md)
 - [LVM](./Topics/lvm.md)
 - [System tuning](./Topics/system_tuning.md)
-- [Systemctl](./Topics/systemctl.md)
 - [GRUB & troubleshooting grub](./Topics/grub.md)
 - [Software management with RPM](./Topics/rpm.md)
 
