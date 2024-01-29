@@ -11,7 +11,7 @@ Preparing for RHCSA exam on RHEL9
 - [Managing swap](./Topics/swap.md)
 - [Logging: rsyslog and journald](./Topics/logging.md)
 - [Mounting remote filesystems](./Topics/remote_fs.md)
-- [Systemctl](./Topics/systemctl.md)
+- [Systemd and systemctl](./Topics/systemctl.md)
 - [Containers](./Topics/containers.md)
 - [Basic kernel management](./Topics/basic_kernel_mgmt.md)
 - [Software management with DNF](./Topics/dnf.md)

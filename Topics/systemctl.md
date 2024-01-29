@@ -22,7 +22,7 @@ They are the unit files with extension **.target**. Are similar to *runlevels*. 
 * **systemctl -t target** - list all targets
 * **systemctl get-default** - show the default system state. Used to be *multi-user* or *graphical*
 * **systemctl set-default** - set the default system state.
-* **systemctl isolate multi-user**   -- switch to another target like *graphical* vs *multi-user*. Only of **AllowIsolate=yes** is set in the unit file
+* **systemctl isolate multi-user**   -- switch to another target like *graphical* vs *multi-user*. Only if **AllowIsolate=yes** is set in the unit file
 
 ## management commands
 
