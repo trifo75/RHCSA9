@@ -28,3 +28,4 @@ xfs_admin
 
 /proc/mounts    -- kb amit a "mount" parancs is ad
 
+Label lekérdezés:   blkid
