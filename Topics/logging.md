@@ -28,6 +28,12 @@ config: `/etc/systemd/journald.conf`
 
 `journalctl _SYSTEMD.UNIT=sshd.service` -- entries from *sshd* only
 
+### For unprivileged users
+By default a normal user can not use `journalctl` to view logs. 
+If you want them enable, then  you can
+* add user to the `systemd-journal` or `adm` groups. This way they can read *all* logs.
+* use `journalctl --user-unit SERVICENAME` - jopurnal storage option has to be **persistent**
+* on older systemd versions use `journalctl --user --user-unit=SERVICENAME` 
 
 **QUESTION** dmesg ??? Who's reading /var/log/boot.log file?
 
