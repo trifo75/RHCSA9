@@ -1,31 +1,33 @@
-## fs kezelés
+# Managing filesystems
 
-mkfs -t ext4  /dev/devicefile     -- ext4 FS létrehozása
-        xfs|vfat                  -- ugyanaz xfs, vagy vfat
+`mkfs -t ext4 /dev/devicefile` -- create *ext4* filesystem structures on the selected device (format).
+Other filesystem types can be used too, like `xfs` or `vfat`
 
-dev lehet disk, partíció, LV, VDO volume, stratis
+## Automountig FS at boot
 
-# boot-kor mounthoz /etc/fstab-ba kell írni: 6 mező
-1: dev|LABEL=label|UUID=uuid
-2: /mountpt
-3: fs_type (ext4|xfs|...)
-4: mount_opts
-5: kell_fs_dump (alapban 0)
-6: fsck_order   (alapban 0)
+Put an entry into `/etc/fstab` with 6 felds:
+1: device file name or `LABEL=..label..` or `UUID=..device uuid..`
+2: /mountpoint
+3: fs type like: ext4, xfs, ...  reflecting the FS structure of the device
+4: mount options
+5: Is fs dump needed? Default is `0`, meaning *no dump needed*
+6: FSCK order - default is `0`
 
+## Mount options
 
-# mount opts
-vdo esetén        x-systemd.requires=vdo.service   (vagy _netdev)
-stratis esetén    x-systemd.requires=stratisd.service   (vagy _netdev)
+* When using **VDO** device, `x-systemd.requires=vdo.service` is needed az mount option (or _netdev) 
+* When using **stratis** device, `x-systemd.requires=stratisd.service` is needed az mount option (or _netdev)
 
-!! vdo és stratis esetén a df parancs nem ad vissza jó értéket!
+*Warning:* for **vdo** and **stratis** devices the `df` command reports false values. Use the appropriate fs command. 
 
-findmnt --verify   -- syntax check az összes automanat mountra (fstab és systemd is)
-mount -a           -- mindent mountol, mellesleg sytax check az fstab-ra
+## Getting info
 
-tune2fs     -- fs paraméterezés, UUID/LABEL kezelés
-xfs_admin
+* `findmnt --verify` - run syntax check for all the automated mounts (fstab and systemd too)
+* `mount -a` - tries to mount all fs-es configured to automount. Fails on syntax errors.
+* `/proc/mounts` file contains info about mounted filesystems
+* `blkid` command can query labels
 
-/proc/mounts    -- kb amit a "mount" parancs is ad
+## Filesystem params 
 
-Label lekérdezés:   blkid
+* `tune2fs` - adjusting `ext2`, `ext3` or `ext4` filesystems, set/get LABELs, UUIDs and so on
+* `xfs_admin` - adjusting `xfs` filesystems
