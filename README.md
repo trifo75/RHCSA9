@@ -8,6 +8,7 @@ Preparing for RHCSA exam on RHEL9
 - [Firewall](./Topics/firewall.md)
 - [Time](./Topics/time_services.md)
 - [Partitioning](./Topics/partitioning.md)
+- [Managing local filesystems](./Topics/filesystems.md)
 - [Managing swap](./Topics/swap.md)
 - [Logging: rsyslog and journald](./Topics/logging.md)
 - [Mounting remote filesystems](./Topics/remote_fs.md)
@@ -19,7 +20,6 @@ Preparing for RHCSA exam on RHEL9
 - [SELinux](./Topics/selinux.md)
 
 ## Topics to work on yet
-- [Managing local filesystems](./Topics/filesystems.md)
 - [Stratis](./Topics/stratis.md)
 - [LVM](./Topics/lvm.md)
 - [System tuning](./Topics/system_tuning.md)
